@@ -1,0 +1,26 @@
+<plugin id="cordova-plugin-eid-reader" version="1.0.0"
+        xmlns="http://apache.org/cordova/ns/plugins"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+  <name>EidReader</name>
+  <description>Reads Emirates ID MRZ via DataWedge broadcast</description>
+  <license>MIT</license>
+  <keywords>eid, mrz, datawedge, cordova, plugin</keywords>
+
+  <platform name="android">
+    <source-file src="src/android/EidReaderPlugin.java"
+                 target-dir="src/cordova/plugin/eidreader" />
+
+    <config-file target="AndroidManifest.xml" parent="application">
+      <receiver android:name="cordova.plugin.eidreader.EidReaderPlugin$DataWedgeReceiver">
+        <intent-filter>
+          <action android:name="cordova.plugin.eidreader.ACTION" />
+          <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+      </receiver>
+    </config-file>
+  </platform>
+
+  <js-module src="www/eidReader.js" name="EidReader">
+    <clobbers target="cordova.plugins.EidReader" />
+  </js-module>
+</plugin>
