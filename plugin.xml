@@ -11,7 +11,8 @@
                  target-dir="src/cordova/plugin/eidreader" />
 
     <config-file target="AndroidManifest.xml" parent="application">
-      <receiver android:name="cordova.plugin.eidreader.EidReaderPlugin$DataWedgeReceiver">
+      <receiver android:name="cordova.plugin.eidreader.EidReaderPlugin$DataWedgeReceiver"
+                android:exported="false">
         <intent-filter>
           <action android:name="cordova.plugin.eidreader.ACTION" />
           <category android:name="android.intent.category.DEFAULT" />
