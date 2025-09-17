@@ -24,18 +24,25 @@ public class EidReaderPlugin extends CordovaPlugin {
 
     private static CallbackContext callbackContext;
 
+    private static void debug(Context context, String message) {
+        Log.d(TAG, message);
+        if (context != null) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public static class DataWedgeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String scannedData = intent.getStringExtra("com.symbol.datawedge.data_string");
-            Log.d(TAG, "Scanned Data: " + scannedData);
+            debug(context, "Scanned Data: " + scannedData);
 
             String formattedData = scannedData.replace("\n", "").replace("\r", "");
             JSONObject result = new JSONObject();
 
             try {
                 if (isValidEmiratesIdMRZ(formattedData)) {
-                    Toast.makeText(context, "✅ Valid Emirates ID scanned", Toast.LENGTH_SHORT).show();
+                    debug(context, "✅ Valid Emirates ID scanned");
 
                     String emiratesIdNumber = extractEmiratesId(formattedData);
                     String documentNumber = extractDocumentNumber(formattedData);
@@ -60,7 +67,7 @@ public class EidReaderPlugin extends CordovaPlugin {
                         callbackContext.success(result);
                     }
                 } else {
-                    Toast.makeText(context, "❌ Invalid Emirates ID format", Toast.LENGTH_LONG).show();
+                    debug(context, "❌ Invalid Emirates ID format");
                     result.put("status", "error");
                     result.put("message", "Scanned item is not a valid Emirates ID.");
                     if (callbackContext != null) {
@@ -68,8 +75,7 @@ public class EidReaderPlugin extends CordovaPlugin {
                     }
                 }
             } catch (Exception e) {
-                Toast.makeText(context, "⚠️ Parsing error occurred", Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Error parsing MRZ: " + e.getMessage());
+                debug(context, "⚠️ Parsing error occurred: " + e.getMessage());
                 if (callbackContext != null) {
                     callbackContext.error("Parsing error");
                 }
@@ -108,7 +114,7 @@ public class EidReaderPlugin extends CordovaPlugin {
                 SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
                 return outputFormat.format(inputFormat.parse(fullDateString));
             } catch (ParseException e) {
-                Log.e(TAG, "Date parsing error: " + e.getMessage());
+                debug(null, "Date parsing error: " + e.getMessage());
                 return "Parsing error";
             }
         }
@@ -122,10 +128,9 @@ public class EidReaderPlugin extends CordovaPlugin {
             filter.addCategory(Intent.CATEGORY_DEFAULT);
             filter.addAction(ACTION_DATAWEDGE_SCAN);
             cordova.getActivity().registerReceiver(new DataWedgeReceiver(), filter);
-            Log.d(TAG, "DataWedge receiver registered.");
+            debug(cordova.getActivity(), "DataWedge receiver registered.");
             return true;
         }
         return false;
     }
 }
-
