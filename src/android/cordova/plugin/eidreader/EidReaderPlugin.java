@@ -130,6 +130,8 @@ public class EidReaderPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) {
+        Toast.makeText(cordova.getActivity(), "Plugin loaded successfully", Toast.LENGTH_SHORT).show();
+
         if ("startListening".equals(action)) {
             EidReaderPlugin.callbackContext = callbackContext;
 
