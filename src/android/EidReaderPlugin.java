@@ -28,15 +28,23 @@ public class EidReaderPlugin extends CordovaPlugin {
         Log.d(TAG, message);
         if (context != null) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        } else {
+            Log.d(TAG, "⚠️ Context is null, cannot show Toast: " + message);
         }
     }
 
     public static class DataWedgeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String scannedData = intent.getStringExtra("com.symbol.datawedge.data_string");
-            debug(context, "Scanned Data: " + scannedData);
+            debug(context, "📡 Receiver triggered");
 
+            String scannedData = intent.getStringExtra("com.symbol.datawedge.data_string");
+            if (scannedData == null || scannedData.trim().isEmpty()) {
+                debug(context, "⚠️ No scanned data received");
+                return;
+            }
+
+            debug(context, "Scanned Data: " + scannedData);
             String formattedData = scannedData.replace("\n", "").replace("\r", "");
             JSONObject result = new JSONObject();
 
@@ -124,11 +132,13 @@ public class EidReaderPlugin extends CordovaPlugin {
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) {
         if ("startListening".equals(action)) {
             EidReaderPlugin.callbackContext = callbackContext;
+
             IntentFilter filter = new IntentFilter();
             filter.addCategory(Intent.CATEGORY_DEFAULT);
             filter.addAction(ACTION_DATAWEDGE_SCAN);
             cordova.getActivity().registerReceiver(new DataWedgeReceiver(), filter);
-            debug(cordova.getActivity(), "DataWedge receiver registered.");
+            debug(cordova.getActivity(), "✅ DataWedge receiver registered.");
+
             return true;
         }
         return false;
