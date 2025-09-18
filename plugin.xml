@@ -1,4 +1,4 @@
-<plugin id="cordova-plugin-eid-reader" version="1.0.0"
+<plugin id="cordova-plugin-eid-reader" version="1.0.1"
         xmlns="http://apache.org/cordova/ns/plugins"
         xmlns:android="http://schemas.android.com/apk/res/android">
   <name>EidReader</name>
